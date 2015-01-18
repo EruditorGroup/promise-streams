@@ -54,7 +54,7 @@ function incoming(data, enc, done) {
         .bind(this)
         .spread(this._fn)
         .then(nothing);
-    processed.catch(done);
+    processed.catch(nothing);
     queue.push(processed);
     if (queue.length >= this._concurrent) {
         var next = queue.shift();
@@ -62,8 +62,13 @@ function incoming(data, enc, done) {
         // node streams which forbid you to call done twice
         // at the same tick on the event loop, even if you
         // had events happening at the exact same tick
-        if (next.isResolved()) nextTick().done(done, done)
-        else next.done(done, done);
+        if (next.isResolved()) {
+            nextTick()
+              .return(next)
+              .done(done,done);
+        } else {
+            next.done(done,done);
+        }
     }
     else {
         done();
@@ -218,8 +223,8 @@ function pipe(source, sink) {
             .on("error", reject);
     }).finally(function() {
         source.removeListener("end", resolve);
-        source.removeListener("error", reject);
-        sink.removeListener("error", reject);
+        //source.removeListener("error", reject);
+        //sink.removeListener("error", reject);
     });
 }
 
