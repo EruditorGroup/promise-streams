@@ -16,7 +16,7 @@ function defer() {
 
 
 function defaults(opts, fn, end) {
-    if (typeof(opts) === 'function') {
+    if (typeof opts === 'function') {
         end = fn; fn = opts; opts = {};
     }
     if (fn == null) fn = identity;
@@ -132,7 +132,7 @@ function reduce(opts, fn, initial) {
 PromiseStream.prototype.wait =
   PromiseStream.prototype.promise = promise;
 function promise() {
-    this.resume()
+    maybeResume(this)
     return this._streamEnd.promise;
 }
 
@@ -195,7 +195,7 @@ function ReducePromiseStream(opts, fn, initial) {
 ReducePromiseStream.prototype.wait =
   ReducePromiseStream.prototype.promise = reduceStreamPromise;
 function reduceStreamPromise() {
-    this.resume()
+    maybeResume(this)
     return this._reduceResult.promise;
 }
 
@@ -228,7 +228,7 @@ function waitStream(s) {
         s.on('end', resolve);
         s.on('finish', resolve);
         s.on('error', reject);
-        maybeResume(this)
+        maybeResume(s)
     });
 }
 
