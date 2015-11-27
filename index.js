@@ -26,7 +26,7 @@ function defaults(opts, fn, end) {
 
 function nextTick() {
     return new Promise(function(resolve, reject) {
-        process.nextTick(resolve);
+        setImmediate(resolve);
     });
 }
 
