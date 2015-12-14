@@ -268,10 +268,13 @@ function needMoreData(state) {
 function safePush(chunk, encoding, flushOnly) {
     var state = this._readableState;
     var queue = this.wrapTransformData.queue;
+
     if(!flushOnly){ queue.push(chunk); }
 
+    // Вдавливаем вниз строго по готовности.
+    // Null пропихиваем побыстрее, независимо от pushSt (иначе пайплайн виснет).
     var pushSt = needMoreData(state);
-    for(;pushSt && queue.length;) {
+    for(;queue.length && (pushSt || queue[0] === null);) {
         pushSt = this.wrapTransformData.push.apply(this, [
             queue.shift(),
             encoding
@@ -285,12 +288,14 @@ function safePush(chunk, encoding, flushOnly) {
  */
 function safeTransformCallback(self, err, data, cb) {
     if(err) { return cb(err); }
-    if(data){ self.push(); }
+    if(data) { self.push(data); }
 
     var queue = self.wrapTransformData.queue;
     var state = self._readableState;
 
+    //console.log("safeTransformCallback");
     if(needMoreData(state) && !queue.length){
+        //console.log("-> Callback");
         return setImmediate(cb);
     }
 
