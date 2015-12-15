@@ -45,6 +45,7 @@ function PromiseStream(opts, fn, end) {
     this._streamEnd = defer();
     this._concurrent = Math.max(1, args.opts.concurrent || 1);
     this._queue = [];
+    this._opts = JSON.parse(JSON.stringify(opts));
 }
 
 PromiseStream.prototype._transform = incoming;
