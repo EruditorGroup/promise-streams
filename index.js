@@ -131,7 +131,7 @@ function MapPromiseStream(opts, fn) {
     PromiseStream.call(this, opts, fn);
     this._mapfn = this._fn;
     this._fn = mapStreamFn;
-    wrapTransform(this);
+    exports.wrapTransform(this);
 }
 
 function mapStreamFn(el) {
