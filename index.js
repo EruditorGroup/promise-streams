@@ -358,6 +358,8 @@ function readAndWaterMarkEvent(n) {
  * @returns {*}
  */
 function wrapTransform(self) {
+    if(self.wrapTransformData) { return self; }
+
     self.wrapTransformData = {
         isDeferredCallback: false,
         queue: [],
